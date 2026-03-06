@@ -144,12 +144,11 @@
   
   if section-style == "robosym" {
     show heading.where(level: 1): it => context {
-      font-size-heading
-      align(center)[
-        #counter(heading).display("1.")
-        #h(1em)
-        #it.body
-      ]
+      set text(size: font-size-heading, al)
+      set align(center)
+      counter(heading).display("1.")
+      h(1em)
+      it.body
     }
     show heading.where(level: 2): it => context {
       counter(heading).display("1・1")
