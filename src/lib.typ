@@ -114,12 +114,14 @@
     else if el != none and el.func() == heading {
       let sec-cnt = counter(heading).at(el.location())
       if el.numbering != numbering-appendix {
-        if el.depth == 1 {
-          link(el.location(), [#sec-cnt.at(0)章])
-        } else if el.depth == 2{
-          link(el.location(), [#sec-cnt.at(0)章#sec-cnt.at(1)節])
-        } else if el.depth == 3{
-          link(el.location(), [#sec-cnt.at(0)章#sec-cnt.at(1)節#sec-cnt.at(2)項])
+        if el.depth == 1 and sec-cnt.len() >= 1 {
+          if el.depth == 1 {
+            link(el.location(), [#sec-cnt.at(0)章])
+          } else if el.depth == 2{
+            link(el.location(), [#sec-cnt.at(0)章#sec-cnt.at(1)節])
+          } else if el.depth == 3{
+            link(el.location(), [#sec-cnt.at(0)章#sec-cnt.at(1)節#sec-cnt.at(2)項])
+          }
         }
       } else {
         link(el.location(), [
@@ -135,16 +137,6 @@
   set enum(indent: 1em)
   set list(indent: 1em)
 
-  let section_counter = counter("section")
-  let section = context {
-    section_counter.display("1")
-  }
-
-  let subsection_counter = counter("subsection")
-  let subsection = context {
-    subsection_counter.display("1")
-  }
-
   // Configure headings.
   if section-style == "robosym" {
     set heading(numbering: none)
@@ -156,16 +148,13 @@
   
   if section-style == "robosym" {
     show heading.where(level: 1): it => context {
-        font-size-heading
-        section_counter.step()
-        subsection_counter.update(1)
-        align(center, it)
+      font-size-heading
+      let cnt = counter(heading).at(here())
+      align(center, it)
       }
     show heading.where(level: 2): it => context {
-      let s = section_counter.display("1")
-      let ss = subsection_counter.display("1")
-      subsection_counter.step()
-      [#s・#ss#h(2em)#it.body]
+      let cnt = counter(heading).at(here())
+      [#cnt.at(0)・#cnt.at(1)#h(2em)#it.body]
     }
   }
   else {
