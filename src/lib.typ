@@ -146,7 +146,7 @@
     show heading.where(level: 1): it => context {
       font-size-heading
       align(center)[
-        #counter(heading).display("1")
+        #counter(heading).display("1.")
         #h(1em)
         #it.body
       ]
