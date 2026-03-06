@@ -37,12 +37,14 @@
   front-matter-order: ("title", "authors", "title-en", "authors-en", "affiliation", "abstract", "keywords"),  // 独自コンテンツの追加も可能
   front-matter-spacing: 1.5em,
   front-matter-margin: 2.0em,
-  abstract-language: "en",  // "ja" or "en"
-  keywords-language: "en",  // "ja" or "en"
   abstract-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
+  abstract-language: "en",  // "ja" or "en"
   keywords-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
+  keywords-language: "en",  // "ja" or "en"
   bibliography-style: "sice.csl",  // "sice.csl", "rsj.csl", "ieee", etc.
-
+  
+  section-style: "robosym", // "robosym", "robomech", etc.
+  
   // 見出し Headings
   heading-abstract: [*Abstract--*],
   heading-keywords: [_*Keywords*_: ],
@@ -61,9 +63,8 @@
   // 補足語 Supplement
   supplement-image: [図],
   supplement-table: [表],
-  supplement-equation-ref: [式],
   supplement-separator: [: ],
-  supplement-equation: [],  // 式、Eq. など
+  supplement-equation: [式],  // 式、Eq. など
   // 番号付け Numbering
   numbering-headings: "1.1.  ",
   numbering-equation: "(1)",
@@ -106,7 +107,7 @@
     let el = it.element
     if el != none and el.func() == eq {
       let num = numbering(el.numbering, ..counter(eq).at(el.location()))
-      link(el.location(), [#supplement-equation-ref #num])
+      link(el.location(), [#supplement-equation #num])
     }
     // Sections -> n章m節l項.
     // Appendix -> 付録A.
@@ -135,28 +136,40 @@
   set list(indent: 1em)
 
   let section_counter = counter("section")
-  let subsection_counter = counter("subsection")
-
-  let section = () => context {
+  let section = context {
     section_counter.display("1")
   }
 
-  let subsection = () => context {
+  let subsection_counter = counter("subsection")
+  let subsection = context {
     subsection_counter.display("1")
   }
 
   // Configure headings.
-  set heading(numbering: numbering-headings)
+  if section-style == "robosym" {
+    set heading(numbering: none)
+  } else {
+    set heading(numbering: numbering-headings)
+  }
   show heading: set block(spacing: spacing-heading)
   show heading: set text(size: font-size-heading, font: font-heading, weight: "bold")
-  show heading.where(level: 1): it => {
-    align(center, it)
-    section_counter.step()
-    subsection_counter.update(1)
+  
+  if section-style == "robosym" {
+    show heading.where(level: 1): it => context {
+        font-size-heading
+        section_counter.step()
+        subsection_counter.update(1)
+        align(center, it)
+      }
+    show heading.where(level: 2): it => context {
+      let s = section_counter.display("1")
+      let ss = subsection_counter.display("1")
+      subsection_counter.step()
+      [#s・#ss#h(2em)#it.body]
+    }
   }
-  show heading.where(level: 2): it => {
-    section() + "・"  + subsection() +  h(1em) + it.body + h(2em) + [ ]
-    subsection_counter.step()
+  else {
+    set text(size: font-size-heading)
   }
 
   // Configure figures.
@@ -234,10 +247,6 @@
         },
         []
       )
-
-      v(front-matter-spacing, weak: true)
-      v(keywords-margin.bottom, weak: true)
-      v(front-matter-spacing, weak: true)
       v(keywords-margin.bottom, weak: true)
     } else {
       item
