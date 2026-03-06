@@ -13,8 +13,9 @@
   // 基本 Basic
   title: [Typst を使った国内学会論文の書き方 \ - 国内学会予稿集に似せたフォーマットの作成 - ],
   title-en: [How to Write a Conference Paper in Japanese],
-  authors: [◯ 著者姓1 著者名1、著者姓2 著者名2(○○○大学)、著者姓3 著者名3 (□□□株式会社)],
-  authors-en: [\*A. First, B. Second (○○○ Univ.), and C. Third (□□□ Corp.)],
+  authors: [著者1#sup_ast(1), 著者2#sup_ast(1), 著者3#sup_ast(2)],
+  authors-en: [Author1#sup_ast(1), Author2#sup_ast(1) and Author3#sup_ast(2)],
+  affiliation: ([Typst University], [LaTeX University]),
   abstract: [#lorem(80)],
   keywords: ([Typst], [conference paper writing], [manuscript format]),
   // フォント名 Font family

@@ -11,36 +11,41 @@
 #let corollary = thmja("corollary", context{text(font: query(<heading-font>).first().value)[系]})
 #let proof = thmproof("proof", context{text(font: query(<heading-font>).first().value)[証明]}, separator: [#h(0.9em)], titlefmt: strong, inset: (top: 0em, left: 0em))
 
+#let sup_ast(num) = super(typographic: true, baseline: -0.3em, size: 0.7em)[\*] + super(typographic: true, baseline: -0.5em, size: 0.6em)[#num]
+
 #let jaconf(
   // 基本 Basic
   title: [タイトル],
   title-en: [Title in English],
-  authors: [著者],
-  authors-en: [Authors in English],
+  authors: [著者1#sup_ast(1), 著者2#sup_ast(1)],
+  authors-en: [Author1#sup_ast(1), Author2#sup_ast(1)],
+  affiliation: ([Typst University], [LaTeX University]),
   abstract: none,
   keywords: (),
   // フォント名 Font family
-  font-heading: "Noto Sans CJK JP",  // サンセリフ体、ゴシック体などの指定を推奨
-  font-main: "Noto Serif CJK JP",  // セリフ体、明朝体などの指定を推奨
-  font-latin: "New Computer Modern",
-  font-math: "New Computer Modern Math",
+  font-heading: ("Yu Gothic", "YuGothic", "MS Gothic"),  // サンセリフ体、ゴシック体などの指定を推奨
+  font-main: ("Times New Roman", "Yu Mincho", "YuMincho", "MS Mincho"),  // セリフ体、明朝体などの指定を推奨
+  font-latin: ("Times New Roman"),  // 欧文フォント
+  font-math: ("New Computer Modern Math"),
   // 外観 Appearance
-  paper-margin: (top: 20mm, bottom: 27mm, left: 20mm, right: 20mm),
+  paper-margin: (top: 25mm, bottom: 25mm, left: 23mm, right: 23mm),
   paper-columns: 2,  // 1: single column, 2: double column
   page-number: none,  // e.g. "1/1"
   column-gutter: 4%+0pt,
   spacing-heading: 1.2em,
-  front-matter-order: ("title", "authors", "title-en", "authors-en", "abstract", "keywords"),  // 独自コンテンツの追加も可能
+
+  front-matter-order: ("title", "authors", "title-en", "authors-en", "affiliation", "abstract", "keywords"),  // 独自コンテンツの追加も可能
   front-matter-spacing: 1.5em,
   front-matter-margin: 2.0em,
-  abstract-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
   abstract-language: "en",  // "ja" or "en"
-  keywords-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
   keywords-language: "en",  // "ja" or "en"
+  abstract-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
+  keywords-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
   bibliography-style: "sice.csl",  // "sice.csl", "rsj.csl", "ieee", etc.
+
   // 見出し Headings
   heading-abstract: [*Abstract--*],
-  heading-keywords: [*Keywords*: ],
+  heading-keywords: [_*Keywords*_: ],
   heading-bibliography: [参　考　文　献],
   heading-appendix: [付　録],
   // フォントサイズ Font size
@@ -48,17 +53,19 @@
   font-size-title-en: 12pt,
   font-size-authors: 12pt,
   font-size-authors-en: 12pt,
+  font-size-affiliation: 10pt,
   font-size-abstract: 10pt,
-  font-size-heading: 12pt,
+  font-size-heading: 10pt,
   font-size-main: 10pt,
   font-size-bibliography: 9pt,
   // 補足語 Supplement
   supplement-image: [図],
   supplement-table: [表],
+  supplement-equation-ref: [式],
   supplement-separator: [: ],
   supplement-equation: [],  // 式、Eq. など
   // 番号付け Numbering
-  numbering-headings: "1.1",
+  numbering-headings: "1.1.  ",
   numbering-equation: "(1)",
   numbering-appendix: "A.1",  // #show: appendix.with(numbering-appendix: "A.1") の呼び出しにも同じ引数を与えてください。
   // 本文
@@ -99,7 +106,7 @@
     let el = it.element
     if el != none and el.func() == eq {
       let num = numbering(el.numbering, ..counter(eq).at(el.location()))
-      link(el.location(), [#supplement-equation #num])
+      link(el.location(), [#supplement-equation-ref #num])
     }
     // Sections -> n章m節l項.
     // Appendix -> 付録A.
@@ -127,11 +134,30 @@
   set enum(indent: 1em)
   set list(indent: 1em)
 
+  let section_counter = counter("section")
+  let subsection_counter = counter("subsection")
+
+  let section = () => context {
+    section_counter.display("1")
+  }
+
+  let subsection = () => context {
+    subsection_counter.display("1")
+  }
+
   // Configure headings.
   set heading(numbering: numbering-headings)
   show heading: set block(spacing: spacing-heading)
-  show heading: set text(size: font-size-main, font: font-heading, weight: "bold")
-  show heading.where(level: 1): set text(size: font-size-heading)
+  show heading: set text(size: font-size-heading, font: font-heading, weight: "bold")
+  show heading.where(level: 1): it => {
+    align(center, it)
+    section_counter.step()
+    subsection_counter.update(1)
+  }
+  show heading.where(level: 2): it => {
+    section() + "・"  + subsection() +  h(1em) + it.body + h(2em) + [ ]
+    subsection_counter.step()
+  }
 
   // Configure figures.
   show figure.where(kind: table): set figure(placement: top, supplement: supplement-table)
@@ -157,6 +183,18 @@
       // Display the authors list in English.
       align(center, text(font-size-authors-en, authors-en, font: font-latin))
       v(front-matter-spacing, weak: true)
+    } else if item == "affiliation" and affiliation != () {
+      // Display the affiliation list.
+      align(center)[
+        #set text(font: font-main, size: font-size-affiliation)
+        #for (i, a) in affiliation.enumerate() [
+          @footnote #a
+          #if i < affiliation.len() - 1 [
+            \
+          ]
+        ]
+      ]
+      v(front-matter-spacing, weak: true)
     } else if item == "abstract" and abstract != none {
       // Display abstract.
       v(abstract-margin.top, weak: true)
@@ -176,7 +214,7 @@
         },
         []
       )
-      v(abstract-margin.bottom, weak: true)
+      v(front-matter-spacing, weak: true)
     } else if item == "keywords" and keywords != () {
       // Display index terms as keywords.
       v(keywords-margin.top, weak: true)
@@ -196,6 +234,10 @@
         },
         []
       )
+
+      v(front-matter-spacing, weak: true)
+      v(keywords-margin.bottom, weak: true)
+      v(front-matter-spacing, weak: true)
       v(keywords-margin.bottom, weak: true)
     } else {
       item
