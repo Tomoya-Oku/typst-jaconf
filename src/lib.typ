@@ -33,23 +33,16 @@
   page-number: none,  // e.g. "1/1"
   column-gutter: 4%+0pt,
   spacing-heading: 1.2em,
-<<<<<<< HEAD:jaconf/lib.typ
+
   front-matter-order: ("title", "authors", "title-en", "authors-en", "affiliation", "abstract", "keywords"),  // 独自コンテンツの追加も可能
   front-matter-spacing: 1.5em,
   front-matter-margin: 2.0em,
   abstract-language: "en",  // "ja" or "en"
   keywords-language: "en",  // "ja" or "en"
-  bibliography-style: "robotics-symposia.csl",  // "sice.csl", "rsj.csl", "ieee", etc.
-=======
-  front-matter-order: ("title", "authors", "title-en", "authors-en", "abstract", "keywords"),  // 独自コンテンツの追加も可能
-  front-matter-spacing: 1.5em,
-  front-matter-margin: 2.0em,
   abstract-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
-  abstract-language: "en",  // "ja" or "en"
   keywords-margin: (top: 1em, bottom: 1em, left: 0.7cm, right: 0.7cm),
-  keywords-language: "en",  // "ja" or "en"
   bibliography-style: "sice.csl",  // "sice.csl", "rsj.csl", "ieee", etc.
->>>>>>> main:src/lib.typ
+
   // 見出し Headings
   heading-abstract: [*Abstract--*],
   heading-keywords: [_*Keywords*_: ],
@@ -113,11 +106,7 @@
     let el = it.element
     if el != none and el.func() == eq {
       let num = numbering(el.numbering, ..counter(eq).at(el.location()))
-<<<<<<< HEAD:jaconf/lib.typ
       link(el.location(), [#supplement-equation-ref #num])
-=======
-      link(el.location(), [#supplement-equation #num])
->>>>>>> main:src/lib.typ
     }
     // Sections -> n章m節l項.
     // Appendix -> 付録A.
@@ -194,7 +183,6 @@
       // Display the authors list in English.
       align(center, text(font-size-authors-en, authors-en, font: font-latin))
       v(front-matter-spacing, weak: true)
-<<<<<<< HEAD:jaconf/lib.typ
     } else if item == "affiliation" and affiliation != () {
       // Display the affiliation list.
       align(center)[
@@ -208,16 +196,10 @@
       ]
       v(front-matter-spacing, weak: true)
     } else if item == "abstract" and abstract != none {
-      // Display abstract and index terms.
-      grid(
-        columns: (0.7cm, 1fr, 0.7cm),
-=======
-    } else if item == "abstract" and abstract != none {
       // Display abstract.
       v(abstract-margin.top, weak: true)
       grid(
         columns: (abstract-margin.left, 1fr, abstract-margin.right),
->>>>>>> main:src/lib.typ
         [],
         {
           set par(first-line-indent: 0em)
@@ -232,20 +214,12 @@
         },
         []
       )
-<<<<<<< HEAD:jaconf/lib.typ
       v(front-matter-spacing, weak: true)
-    } else if item == "keywords" and keywords != () {
-      // Display abstract and index terms.
-      grid(
-        columns: (0.7cm, 1fr, 0.7cm),
-=======
-      v(abstract-margin.bottom, weak: true)
     } else if item == "keywords" and keywords != () {
       // Display index terms as keywords.
       v(keywords-margin.top, weak: true)
       grid(
         columns: (keywords-margin.left, 1fr, keywords-margin.right),
->>>>>>> main:src/lib.typ
         [],
         {
           set par(first-line-indent: 0em)
@@ -260,11 +234,11 @@
         },
         []
       )
-<<<<<<< HEAD:jaconf/lib.typ
+
       v(front-matter-spacing, weak: true)
-=======
       v(keywords-margin.bottom, weak: true)
->>>>>>> main:src/lib.typ
+      v(front-matter-spacing, weak: true)
+      v(keywords-margin.bottom, weak: true)
     } else {
       item
     }
