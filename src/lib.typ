@@ -149,11 +149,11 @@
   if section-style == "robosym" {
     show heading.where(level: 1): it => context {
       font-size-heading
-      let cnt = counter(heading).at(here())
-      align(center, it)
-      }
+      let cnt = counter(heading).at(it.location())
+      align(center)[#cnt.at(0) #h(1em) #it.body]
+    }
     show heading.where(level: 2): it => context {
-      let cnt = counter(heading).at(here())
+      let cnt = counter(heading).at(it.location())
       [#cnt.at(0)・#cnt.at(1)#h(2em)#it.body]
     }
   }
