@@ -138,23 +138,23 @@
   set list(indent: 1em)
 
   // Configure headings.
-  if section-style == "robosym" {
-    set heading(numbering: none)
-  } else {
-    set heading(numbering: numbering-headings)
-  }
+  set heading(numbering: numbering-headings)
   show heading: set block(spacing: spacing-heading)
   show heading: set text(size: font-size-heading, font: font-heading, weight: "bold")
   
   if section-style == "robosym" {
     show heading.where(level: 1): it => context {
       font-size-heading
-      let cnt = counter(heading).at(it.location())
-      align(center)[#cnt.at(0) #h(1em) #it.body]
+      align(center)[
+        #counter(heading).display("1")
+        #h(1em)
+        #it.body
+      ]
     }
     show heading.where(level: 2): it => context {
-      let cnt = counter(heading).at(it.location())
-      [#cnt.at(0)・#cnt.at(1)#h(2em)#it.body]
+      counter(heading).display("1・1")
+      h(2em)
+      it.body
     }
   }
   else {
