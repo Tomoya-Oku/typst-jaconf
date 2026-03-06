@@ -66,7 +66,7 @@
   supplement-separator: [: ],
   supplement-equation: [式],  // 式、Eq. など
   // 番号付け Numbering
-  numbering-headings: "1.1.  ",
+  numbering-headings: "1.1",
   numbering-equation: "(1)",
   numbering-appendix: "A.1",  // #show: appendix.with(numbering-appendix: "A.1") の呼び出しにも同じ引数を与えてください。
   // 本文
@@ -227,7 +227,7 @@
         },
         []
       )
-      v(front-matter-spacing, weak: true)
+      v(abstract-margin.bottom, weak: true)
     } else if item == "keywords" and keywords != () {
       // Display index terms as keywords.
       v(keywords-margin.top, weak: true)
